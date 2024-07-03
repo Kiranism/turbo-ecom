@@ -1,0 +1,3 @@
+{
+  "extends": "@turbo-ecom/typescript-config/base.json"
+}
