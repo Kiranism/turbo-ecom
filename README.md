@@ -13,6 +13,8 @@ npx create-turbo@latest
 ## What's inside?
 
 This Turborepo includes the following packages/apps:
+npx prisma generate && npx prisma migrate dev
+npx prisma generate && npx prisma migrate deploy
 
 ### Apps and Packages
 

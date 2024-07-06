@@ -1,2 +1,2 @@
 export * from "./client";
-export * from "./todo";
+export * from "./controllers/product";

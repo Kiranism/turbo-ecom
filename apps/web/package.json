@@ -9,12 +9,18 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@turbo-ecom/ui": "workspace:*",
+    "@hookform/resolvers": "^3.7.0",
+    "@tanstack/react-query": "^5.50.1",
+    "@tanstack/react-table": "^8.19.2",
     "@turbo-ecom/db": "workspace:*",
+    "@turbo-ecom/ui": "workspace:*",
     "lucide-react": "^0.400.0",
     "next": "15.0.0-rc.0",
     "react": "19.0.0-rc-f994737d14-20240522",
-    "react-dom": "19.0.0-rc-f994737d14-20240522"
+    "react-dom": "19.0.0-rc-f994737d14-20240522",
+    "react-hook-form": "^7.52.1",
+    "zod": "^3.23.8",
+    "zustand": "^4.5.4"
   },
   "devDependencies": {
     "@turbo-ecom/eslint-config": "workspace:*",
