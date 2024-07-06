@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 
-import { Button } from '@/components/ui/button';
+import { Button } from '@turbo-ecom/ui';
 
 export default function NotFound() {
   const router = useRouter();

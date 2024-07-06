@@ -1,5 +1,4 @@
 {
- "extends": "@turbo-ecom/typescript-config/nextjs.json",
   "compilerOptions": {
     "target": "es5",
     "lib": ["dom", "dom.iterable", "esnext"],

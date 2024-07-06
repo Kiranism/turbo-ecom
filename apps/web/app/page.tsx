@@ -1,12 +1,12 @@
-"use client";
-
 import React from "react";
 import { Button } from "@turbo-ecom/ui";
 import { Icons } from "@/components/icons";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@turbo-ecom/ui";
+import { getTodos } from "@turbo-ecom/db";
 
-export default function Home() {
+export default async function Home() {
+  const { todos } = await getTodos();
   return (
     <div className="bg-gray-700">
       <h1 className="text-3xl font-bold underline">Hello world</h1>
