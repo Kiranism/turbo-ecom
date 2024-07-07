@@ -9,3 +9,13 @@ export async function getProducts() {
     return { error };
   }
 }
+
+export async function deleteAllProducts() {
+  try {
+    await prisma.product.deleteMany({});
+    return { success: true };
+  } catch (error) {
+    console.error(error);
+    return { error };
+  }
+}

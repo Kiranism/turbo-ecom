@@ -20,5 +20,6 @@ export * from "./components/table";
 export * from "./components/breadcrumb";
 export * from "./components/form";
 export * from "./components/sonner";
+export * from "./components/input-with-icon";
 
 export * from "./lib/utils";

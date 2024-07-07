@@ -28,12 +28,28 @@ enum Size {
   XXL
 }
 
+model Category {
+  id        String     @id @default(cuid())
+  name      String
+  slug      String     @unique
+  parentId  String?
+  parent    Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children  Category[] @relation("CategoryHierarchy")
+  level     Int        @default(0)
+  isLeaf    Boolean    @default(true)
+  createdAt DateTime   @default(now()) @map(name: "created_at")
+  updatedAt DateTime   @updatedAt @map(name: "updated_at")
+  products  Product[]
+}
+
 model Product {
   id          String           @id @default(cuid())
   name        String
   description String?
   images      String[]
   price       Float
+  categoryId  String
+  category    Category         @relation(fields: [categoryId], references: [id])
   variants    ProductVariant[]
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt

@@ -3,6 +3,7 @@ import { getProducts } from "@turbo-ecom/db";
 
 export default async function Products() {
   const { products } = await getProducts();
+
   console.log("products", products);
   return (
     <div className="p-5">
