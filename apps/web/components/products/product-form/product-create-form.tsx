@@ -1,9 +1,13 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Category, productFormValues, productSchema } from "@turbo-ecom/db";
 import {
   Button,
+  Card,
+  Checkbox,
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -15,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
   Separator,
+  Switch,
   toast,
 } from "@turbo-ecom/ui";
 import { Trash } from "lucide-react";
@@ -49,11 +54,9 @@ const formSchema = z.object({
   category: z.string().min(1, { message: "Please select a category" }),
 });
 
-type ProductFormValues = z.infer<typeof formSchema>;
-
 interface ProductFormProps {
   initialData: any | null;
-  categories: any;
+  categories: Category[];
 }
 
 export const ProductForm: React.FC<ProductFormProps> = ({
@@ -70,22 +73,22 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   const toastMessage = initialData ? "Product updated." : "Product created.";
   const action = initialData ? "Save changes" : "Create";
 
-  const defaultValues = initialData
-    ? initialData
-    : {
-        name: "",
-        description: "",
-        price: 0,
-        imgUrl: [],
-        category: "",
-      };
+  console.log("categories from product form", categories);
 
-  const form = useForm<ProductFormValues>({
-    resolver: zodResolver(formSchema),
+  const defaultValues: productFormValues = {
+    categories: ["recents", "home"],
+    description: "",
+    featured: false,
+    name: "",
+    price: 0,
+  };
+
+  const form = useForm<productFormValues>({
+    resolver: zodResolver(productSchema),
     defaultValues,
   });
 
-  const onSubmit = async (data: ProductFormValues) => {
+  const onSubmit = async (data: productFormValues) => {
     try {
       setLoading(true);
       if (initialData) {
@@ -117,7 +120,32 @@ export const ProductForm: React.FC<ProductFormProps> = ({
     }
   };
 
-  const triggerImgUrlValidation = () => form.trigger("imgUrl");
+  const items = [
+    {
+      id: "recents",
+      label: "Recents",
+    },
+    {
+      id: "home",
+      label: "Home",
+    },
+    {
+      id: "applications",
+      label: "Applications",
+    },
+    {
+      id: "desktop",
+      label: "Desktop",
+    },
+    {
+      id: "downloads",
+      label: "Downloads",
+    },
+    {
+      id: "documents",
+      label: "Documents",
+    },
+  ] as const;
 
   return (
     <>
@@ -145,88 +173,138 @@ export const ProductForm: React.FC<ProductFormProps> = ({
           onSubmit={form.handleSubmit(onSubmit)}
           className="w-full space-y-8"
         >
-          <div className="gap-8 md:grid md:grid-cols-3">
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Name</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Product name"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Description</FormLabel>
-                  <FormControl>
-                    <Input
-                      disabled={loading}
-                      placeholder="Product description"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="price"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Price</FormLabel>
-                  <FormControl>
-                    <Input type="number" disabled={loading} {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="category"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Category</FormLabel>
-                  <Select
-                    disabled={loading}
-                    onValueChange={field.onChange}
-                    value={field.value}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue
-                          defaultValue={field.value}
-                          placeholder="Select a category"
+          <div className="grid grid-cols-12 gap-4">
+            <div className="col-span-7 space-y-2">
+              <Card className="p-4 shadow-none">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Name</FormLabel>
+                      <FormControl>
+                        <Input
+                          disabled={loading}
+                          placeholder="Product name"
+                          {...field}
                         />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {/* @ts-ignore  */}
-                      {categories.map((category) => (
-                        <SelectItem key={category._id} value={category._id}>
-                          {category.name}
-                        </SelectItem>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Description</FormLabel>
+                      <FormControl>
+                        <Input
+                          disabled={loading}
+                          placeholder="Product description"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="price"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Price</FormLabel>
+                      <FormControl>
+                        <Input type="number" disabled={loading} {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </Card>
+            </div>
+
+            <div className="col-span-5">
+              <Card className="p-4 shadow-none space-y-4">
+                <FormField
+                  control={form.control}
+                  name="categories"
+                  render={() => (
+                    <FormItem>
+                      <div className="mb-4">
+                        <FormLabel className="text-base">Sidebar</FormLabel>
+                        <FormDescription>
+                          Select the items you want to display in the sidebar.
+                        </FormDescription>
+                      </div>
+
+                      {items.map((item) => (
+                        <FormField
+                          key={item.id}
+                          control={form.control}
+                          name="categories"
+                          render={({ field }) => {
+                            return (
+                              <FormItem
+                                key={item.id}
+                                className="flex flex-row items-start space-x-3 space-y-0"
+                              >
+                                <FormControl>
+                                  <Checkbox
+                                    checked={field.value?.includes(item.id)}
+                                    onCheckedChange={(checked) => {
+                                      return checked
+                                        ? field.onChange([
+                                            ...field.value,
+                                            item.id,
+                                          ])
+                                        : field.onChange(
+                                            field.value?.filter(
+                                              (value) => value !== item.id
+                                            )
+                                          );
+                                    }}
+                                  />
+                                </FormControl>
+                                <FormLabel className="font-normal">
+                                  {item.label}
+                                </FormLabel>
+                              </FormItem>
+                            );
+                          }}
+                        />
                       ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="featured"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                      <div className="space-y-0.5">
+                        <FormLabel className="text-base">Featured</FormLabel>
+                        <FormDescription>
+                          You can choose to feature this product on your
+                          homepage.
+                        </FormDescription>
+                      </div>
+                      <FormControl>
+                        <Switch
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+              </Card>
+            </div>
           </div>
+
           <Button disabled={loading} className="ml-auto" type="submit">
             {action}
           </Button>
@@ -235,3 +313,28 @@ export const ProductForm: React.FC<ProductFormProps> = ({
     </>
   );
 };
+
+// const CategoryTree = ({ items, field }: { items: Category[]; field: any }) => {
+//   return items.map((item) => (
+//     <FormItem key={item.id} className="flex flex-col ml-4">
+//       <div className="flex flex-row items-start space-x-3">
+//         <FormControl>
+//           <Checkbox
+//             checked={field.value?.includes(item.id)}
+//             onCheckedChange={(checked) => {
+//               return checked
+//                 ? field.onChange([...field.value, item.id])
+//                 : field.onChange(
+//                     field.value?.filter((value) => value !== item.id)
+//                   );
+//             }}
+//           />
+//         </FormControl>
+//         <FormLabel className="font-normal">{item.name}</FormLabel>
+//       </div>
+//       {item.children && item.children.length > 0 && (
+//         <CategoryTree items={item.children} field={field} />
+//       )}
+//     </FormItem>
+//   ));
+// };

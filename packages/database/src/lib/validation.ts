@@ -14,8 +14,15 @@ export const productSchema = z.object({
     .string()
     .min(3, { message: "Description must be at least 3 characters" }),
   price: z.number().min(1, { message: "Price must be at least 1 dollar" }),
-  category: z.string().min(1, { message: "Please select a category" }),
+  featured: z.boolean().default(false).optional(),
+  categories: z
+    .array(z.string())
+    .refine((value) => value.some((item) => item), {
+      message: "You have to select at least one item.",
+    }),
 });
+
+export type productFormValues = z.infer<typeof productSchema>;
 
 const MAX_UPLOAD_SIZE = 1024 * 1024 * 3; // 3MB
 const ACCEPTED_FILE_TYPES = ["image/png"];

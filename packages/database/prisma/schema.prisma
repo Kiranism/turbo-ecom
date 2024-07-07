@@ -29,30 +29,43 @@ enum Size {
 }
 
 model Category {
-  id        String     @id @default(cuid())
-  name      String
-  slug      String     @unique
-  parentId  String?
-  parent    Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id])
-  children  Category[] @relation("CategoryHierarchy")
-  level     Int        @default(0)
-  isLeaf    Boolean    @default(true)
-  createdAt DateTime   @default(now()) @map(name: "created_at")
-  updatedAt DateTime   @updatedAt @map(name: "updated_at")
-  products  Product[]
+  id              String            @id @default(cuid())
+  name            String
+  slug            String            @unique
+  parentId        String?
+  parent          Category?         @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children        Category[]        @relation("CategoryHierarchy")
+  level           Int               @default(0)
+  isLeaf          Boolean           @default(true)
+  createdAt       DateTime          @default(now()) @map(name: "created_at")
+  updatedAt       DateTime          @updatedAt @map(name: "updated_at")
+  products        Product[]
+  ProductCategory ProductCategory[]
 }
 
 model Product {
-  id          String           @id @default(cuid())
+  id          String            @id @default(cuid())
   name        String
   description String?
   images      String[]
   price       Float
-  categoryId  String
-  category    Category         @relation(fields: [categoryId], references: [id])
+  featured    Boolean           @default(false)
+  categories  ProductCategory[]
   variants    ProductVariant[]
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  Category    Category?         @relation(fields: [categoryId], references: [id])
+  categoryId  String?
+}
+
+model ProductCategory {
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  @@id([productId, categoryId])
 }
 
 model ProductVariant {

@@ -1,23 +1,19 @@
 import { ProductForm } from "@/components/products/product-form";
 import { Breadcrumbs } from "@/components/shared/breadcrumbs";
+import { getAllCategories } from "@turbo-ecom/db";
 import { ScrollArea } from "@turbo-ecom/ui";
 
-export default function Page() {
+export default async function Page() {
   const breadcrumbItems = [
     { title: "Products", link: "/dashboard/products" },
     { title: "Add", link: "/dashboard/employee/create" },
   ];
+  const { categories } = await getAllCategories();
   return (
     <ScrollArea className="h-full">
       <div className="flex-1 space-y-4 p-8">
         <Breadcrumbs items={breadcrumbItems} />
-        <ProductForm
-          categories={[
-            { _id: "shirts", name: "shirts" },
-            { _id: "pants", name: "pants" },
-          ]}
-          initialData={null}
-        />
+        <ProductForm categories={categories} initialData={null} />
       </div>
     </ScrollArea>
   );

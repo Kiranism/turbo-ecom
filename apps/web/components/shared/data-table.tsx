@@ -25,8 +25,8 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
-import React, { useCallback } from "react";
-import { useSearchParams } from "next/navigation";
+import React, { use, useCallback, useEffect } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Icons } from "../icons";
 
 interface DataTableProps<TData, TValue> {
@@ -43,6 +43,9 @@ export default function DataTable<TData, TValue>({
   pageSizeOptions = [10, 20, 30, 40, 50],
 }: DataTableProps<TData, TValue>) {
   const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const router = useRouter();
+
   // Search params
   const page = searchParams?.get("page") ?? "1";
   const pageAsNumber = Number(page);
@@ -58,11 +61,20 @@ export default function DataTable<TData, TValue>({
     pageSize: fallbackPerPage,
   });
 
+  // Create query string
   const createQueryString = useCallback(
-    (name: string, value: string) => {
-      const params = new URLSearchParams(searchParams.toString());
-      params.set(name, value);
-      return params.toString();
+    (params: Record<string, string | number | null>) => {
+      const newSearchParams = new URLSearchParams(searchParams?.toString());
+
+      for (const [key, value] of Object.entries(params)) {
+        if (value === null) {
+          newSearchParams.delete(key);
+        } else {
+          newSearchParams.set(key, String(value));
+        }
+      }
+
+      return newSearchParams.toString();
     },
     [searchParams]
   );
@@ -75,6 +87,18 @@ export default function DataTable<TData, TValue>({
     },
     [searchParams]
   );
+
+  useEffect(() => {
+    const url = `${pathname}?${createQueryString({
+      page: pageIndex + 1,
+      limit: pageSize,
+    })}`;
+    router.push(url, {
+      scroll: false,
+    });
+  }, [pageIndex, pageSize]);
+
+  console.log("pagination", pageIndex, pageSize);
 
   const table = useReactTable({
     data,
@@ -93,7 +117,7 @@ export default function DataTable<TData, TValue>({
 
   return (
     <>
-      <ScrollArea className="h-[calc(80vh-220px)] rounded-md border">
+      <ScrollArea className="h-[calc(80vh)] rounded-md border">
         <Table className="relative">
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
