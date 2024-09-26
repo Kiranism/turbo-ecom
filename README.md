@@ -1,6 +1,16 @@
-# Turbo Ecom
+# Turbo Ecom 🚀 
 
 A modern eCommerce application built with Next.js, Prisma, Turborepo, and Shadcn.
+
+## Goal 🎯
+
+The goal of this repository is to learn and demonstrate how to structure a monorepo and share packages across multiple apps. This includes:
+
+- **UI Design System**: Utilizing Shadcn UI to create a shared design system used across both admin and user applications.
+- **Common Prisma Schema**: Sharing a common Prisma schema across apps to handle database interactions, including the use of server actions for both the admin and user apps.
+
+By organizing the project in a monorepo structure, we can efficiently manage and scale multiple applications with shared components, database models, and logic.
+
 
 ## Getting Started
 
